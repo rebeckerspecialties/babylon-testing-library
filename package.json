@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/rebeckerspecialties/babylon-testing-library/issues"
   },
-  "homepage": "https://github.com/rebeckerspecialties/babylon-testing-library#readme"
+  "homepage": "https://github.com/rebeckerspecialties/babylon-testing-library#readme",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
 }
