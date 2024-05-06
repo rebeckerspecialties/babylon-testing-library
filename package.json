@@ -23,6 +23,12 @@
   },
   "homepage": "https://github.com/rebeckerspecialties/babylon-testing-library#readme",
   "devDependencies": {
+    "@babel/core": "^7.24.5",
+    "@babel/preset-env": "^7.24.5",
+    "@babel/preset-typescript": "^7.24.1",
+    "@jest/globals": "^29.7.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
     "typescript": "^5.4.5"
   }
 }
