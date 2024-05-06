@@ -1,0 +1,25 @@
+{
+  "name": "babylon-testing-library",
+  "version": "0.0.1",
+  "description": "Simple utilities that encourage good testing practices for Babylon.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rebeckerspecialties/babylon-testing-library.git"
+  },
+  "keywords": [
+    "Testing",
+    "TDD",
+    "Babylon",
+    "XR"
+  ],
+  "author": "Rebecker Specialties",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rebeckerspecialties/babylon-testing-library/issues"
+  },
+  "homepage": "https://github.com/rebeckerspecialties/babylon-testing-library#readme"
+}
