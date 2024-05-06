@@ -5,7 +5,9 @@
     "main": "index.js",
     "scripts": {
         "test": "jest",
-        "build": "npx swc src -d dist --ignore **/*.spec.ts"
+        "build": "npx swc src -d dist --ignore **/*.spec.ts",
+        "lint": "npx eslint src/*.ts",
+        "format:check": "npx prettier --check src/*.ts"
     },
     "repository": {
         "type": "git",
