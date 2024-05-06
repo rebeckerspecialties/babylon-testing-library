@@ -42,5 +42,10 @@
         "ts-node": "^10.9.2",
         "typescript": "^5.4.5",
         "typescript-eslint": "^7.8.0"
+    },
+    "dependencies": {
+        "@babylonjs/core": "^7.5.0",
+        "@babylonjs/gui": "^7.5.0",
+        "@testing-library/dom": "^10.1.0"
     }
 }
