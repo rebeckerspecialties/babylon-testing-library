@@ -1,0 +1,39 @@
+name: Run Nx Module Tests
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    test-and-lint:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Use Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Validate Build
+              run: npm run build
+
+            - name: Check Format
+              run: npm run format:check
+
+            - name: Check Lint
+              run: npm run lint
+
+            - name: Run Tests
+              run: npm test
