@@ -5,7 +5,18 @@
         "target": "es6",
         "moduleResolution": "node",
         "sourceMap": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "importHelpers": true,
+        "rootDir": ".",
+        "declaration": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "lib": ["es2023", "dom"],
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        "baseUrl": "."
     },
-    "lib": ["es2015"]
+    "lib": ["es2015"],
+    "exclude": ["node_modules", "tmp"],
+    "include": ["**/*.ts"]
 }

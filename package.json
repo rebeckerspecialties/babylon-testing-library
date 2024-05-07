@@ -36,11 +36,18 @@
         "@typescript-eslint/eslint-plugin": "^7.8.0",
         "@typescript-eslint/parser": "^7.8.0",
         "babel-jest": "^29.7.0",
+        "canvas": "^2.11.2",
         "eslint": "^8.57.0",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
         "ts-node": "^10.9.2",
+        "tslib": "^2.6.2",
         "typescript": "^5.4.5",
         "typescript-eslint": "^7.8.0"
+    },
+    "dependencies": {
+        "@babylonjs/core": "^7.5.0",
+        "@babylonjs/gui": "^7.5.0",
+        "@testing-library/dom": "^10.1.0"
     }
 }
