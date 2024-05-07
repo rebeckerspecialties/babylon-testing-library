@@ -1,4 +1,11 @@
-import { Engine, Mesh, MeshBuilder, NullEngine, Scene } from '@babylonjs/core';
+import {
+    Engine,
+    Mesh,
+    MeshBuilder,
+    NullEngine,
+    Scene,
+    Vector2,
+} from '@babylonjs/core';
 import { Event, createEvent, fireEvent } from './event';
 import { EventMap, eventMap } from './eventMap';
 import { AdvancedDynamicTexture, Button, Control, Grid } from '@babylonjs/gui';
@@ -85,5 +92,27 @@ describe('event', () => {
                 `Unable to fire an event - event of type "bogusEvent" does not exist on "${expectedControl.getClassName()}"`
             )
         );
+    });
+
+    it('should allow passing custom data to fireEvent', () => {
+        const spy = jest.fn();
+        expectedControl.onWheelObservable.add((eventData) => {
+            spy(eventData);
+        });
+
+        fireEvent.wheel(expectedControl, new Vector2(0.5, 0.5));
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith(new Vector2(0.5, 0.5));
+    });
+
+    it('should allow passing custom data to createEvent', () => {
+        const event = createEvent.wheel(expectedControl, new Vector2(0.5, 0.5));
+
+        expect(event).toEqual({
+            key: 'wheel',
+            observableName: 'onWheelObservable',
+            eventData: new Vector2(0.5, 0.5),
+        });
     });
 });

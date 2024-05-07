@@ -26,6 +26,10 @@ export type EventMap = {
         observableName: 'onPointerClickObservable';
         defaultInit: Vector2WithInfo;
     };
+    wheel: {
+        observableName: 'onWheelObservable';
+        defaultInit: Vector2;
+    };
 };
 
 const DEFAULT_VECTOR2_WITH_INFO = new Vector2WithInfo(Vector2.Zero());
@@ -54,5 +58,9 @@ export const eventMap: EventMap = {
     pointerClick: {
         observableName: 'onPointerClickObservable',
         defaultInit: DEFAULT_VECTOR2_WITH_INFO,
+    },
+    wheel: {
+        observableName: 'onWheelObservable',
+        defaultInit: Vector2.Zero(),
     },
 };

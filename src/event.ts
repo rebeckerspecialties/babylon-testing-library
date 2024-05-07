@@ -43,10 +43,10 @@ function createEventFn<K extends keyof EventMap>(
 Object.keys(eventMap).forEach((key: keyof EventMap) => {
     const { defaultInit } = eventMap[key];
     createEventFn[key] = (node: Control, init?: typeof defaultInit) =>
-        createEvent(key, node, init ?? defaultInit);
+        createEventFn(key, node, init ?? defaultInit);
 
     fireEventFn[key] = (node: Control, init?: typeof defaultInit) => {
-        fireEvent(node, createEvent[key](node, init));
+        fireEventFn(node, createEventFn[key](node, init));
     };
 });
 
