@@ -17,7 +17,7 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
 
         if (result.length > 1) {
             throw getMultipleError(
-                'Found multiple elements matching ',
+                `Found multiple elements matching ${matcher}`,
                 container
             );
         }
@@ -29,7 +29,7 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
         const result = queryAllBy(container, matcher);
         if (result.length === 0) {
             throw getMissingError(
-                `Failed to find an element matching: ${matcher}.`,
+                `Failed to find an element matching: ${matcher}`,
                 container
             );
         }
@@ -40,7 +40,7 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
         const result = getAllBy(container, matcher);
         if (result.length > 1) {
             throw getMultipleError(
-                `Found multiple elements matching ${matcher}.`,
+                `Found multiple elements matching ${matcher}`,
                 container
             );
         }
@@ -67,5 +67,5 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
         }, waitForOptions);
     };
 
-    return [queryBy, getAllBy, getBy, findAllBy, findBy];
+    return { queryBy, getAllBy, getBy, findAllBy, findBy };
 }

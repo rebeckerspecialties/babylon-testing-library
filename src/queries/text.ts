@@ -1,8 +1,8 @@
 import { Control, TextBlock } from '@babylonjs/gui';
 import { BabylonContainer, findAllMatchingDescendants } from './utils';
-import { buildQueries } from 'src/query-helpers';
+import { buildQueries } from '../query-helpers';
 
-function getMultipleElementsFoundError(
+export function getMultipleElementsFoundError(
     message: string,
     container: BabylonContainer
 ) {
@@ -32,12 +32,17 @@ const queryAllByText = (
     return [...baseArray, ...findAllMatchingDescendants(container, matcher)];
 };
 
-const [queryByText, getAllByText, getByText, findAllByText, findByText] =
-    buildQueries(
-        queryAllByText,
-        getMultipleElementsFoundError,
-        getMissingError
-    );
+const {
+    queryBy: queryByText,
+    getAllBy: getAllByText,
+    getBy: getByText,
+    findAllBy: findAllByText,
+    findBy: findByText,
+} = buildQueries(
+    queryAllByText,
+    getMultipleElementsFoundError,
+    getMissingError
+);
 
 export {
     queryAllByText,
