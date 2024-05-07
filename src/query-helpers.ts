@@ -1,4 +1,31 @@
 import { waitFor, waitForOptions } from '@testing-library/dom';
+import { BabylonContainer, findAllMatchingDescendants } from './queries/utils';
+import { getMultipleElementsFoundError } from './queries';
+
+export function queryAllByAttribute<AttributeType>(
+    attribute: string,
+    container: BabylonContainer,
+    value: AttributeType
+) {
+    return findAllMatchingDescendants(
+        container,
+        (control) => control[attribute] === value
+    );
+}
+
+export function queryByAttribute<AttributeType>(
+    attribute: string,
+    container: BabylonContainer,
+    value: AttributeType
+) {
+    const controls = queryAllByAttribute(attribute, container, value);
+    if (controls.length > 1) {
+        throw getMultipleElementsFoundError(
+            `Found multiple elements by [${attribute}=${value}]`,
+            container
+        );
+    }
+}
 
 export function buildQueries<ContainerType, MatcherType, ResultType>(
     queryAllBy: (
