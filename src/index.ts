@@ -1,1 +1,1 @@
-export const placeholder = 5;
+export * from './queries';
