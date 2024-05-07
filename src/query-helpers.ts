@@ -27,12 +27,19 @@ export function queryByAttribute<AttributeType>(
     value: AttributeType
 ) {
     const controls = queryAllByAttribute(attribute, container, value);
+
+    if (controls.length === 0) {
+        return null;
+    }
+
     if (controls.length > 1) {
         throw getMultipleElementsFoundError(
             `Found multiple elements by [${attribute}=${value}]`,
             container
         );
     }
+
+    return controls[0];
 }
 
 export function buildQueries<ContainerType, MatcherType, ResultType>(

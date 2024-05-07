@@ -19,13 +19,7 @@ const queryAllByText = (
         return control instanceof TextBlock && control.text === text;
     };
 
-    const baseArray: Control[] = [];
-
-    if (container instanceof Control && matcher(container)) {
-        baseArray.push(container);
-    }
-
-    return [...baseArray, ...findAllMatchingDescendants(container, matcher)];
+    return findAllMatchingDescendants(container, matcher);
 };
 
 const {
