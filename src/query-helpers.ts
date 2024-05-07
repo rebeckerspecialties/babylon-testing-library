@@ -1,6 +1,14 @@
 import { waitFor, waitForOptions } from '@testing-library/dom';
 import { BabylonContainer, findAllMatchingDescendants } from './queries/utils';
-import { getMultipleElementsFoundError } from './queries';
+
+export function getMultipleElementsFoundError<ContainerType>(
+    message: string,
+    container: ContainerType
+) {
+    return new Error(
+        `${message}\n\n(If this is intentional, then use the \`*AllBy*\` variant of the query (like \`queryAllByText\`, \`getAllByText\`, or \`findAllByText\`)). Container: ${container}`
+    );
+}
 
 export function queryAllByAttribute<AttributeType>(
     attribute: string,
@@ -32,7 +40,7 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
         container: ContainerType,
         matcher: MatcherType
     ) => ResultType[],
-    getMultipleError: (message: string, container: ContainerType) => Error,
+    getMultipleError: (container: ContainerType, message: string) => string,
     getMissingError: (text: string, container: ContainerType) => Error
 ) {
     const queryBy = (container: ContainerType, matcher: MatcherType) => {
@@ -43,8 +51,8 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
         }
 
         if (result.length > 1) {
-            throw getMultipleError(
-                `Found multiple elements matching ${matcher}`,
+            throw getMultipleElementsFoundError(
+                getMultipleError(container, `${matcher}`),
                 container
             );
         }
@@ -55,10 +63,7 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
     const getAllBy = (container: ContainerType, matcher: MatcherType) => {
         const result = queryAllBy(container, matcher);
         if (result.length === 0) {
-            throw getMissingError(
-                `Failed to find an element matching: ${matcher}`,
-                container
-            );
+            throw getMissingError(`${matcher}`, container);
         }
         return result;
     };
@@ -66,8 +71,8 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
     const getBy = (container: ContainerType, matcher: MatcherType) => {
         const result = getAllBy(container, matcher);
         if (result.length > 1) {
-            throw getMultipleError(
-                `Found multiple elements matching ${matcher}`,
+            throw getMultipleElementsFoundError(
+                getMultipleError(container, `${matcher}`),
                 container
             );
         }

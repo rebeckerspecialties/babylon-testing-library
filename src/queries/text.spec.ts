@@ -4,7 +4,6 @@ import {
     findByText,
     getAllByText,
     getByText,
-    getMultipleElementsFoundError,
     queryAllByText,
     queryByText,
 } from './text';
@@ -16,6 +15,7 @@ import {
 } from '@babylonjs/gui';
 import { BabylonContainer } from './utils';
 import { getElementError } from '@testing-library/dom';
+import { getMultipleElementsFoundError } from '../query-helpers';
 
 describe('text query', () => {
     let scene: Scene,
@@ -232,7 +232,7 @@ describe('text query', () => {
 
                     expect(() => singleText(container, 'Hello World!')).toThrow(
                         new Error(
-                            `Found multiple elements matching Hello World!\n\n(If this is intentional, then use the \`*AllBy*\` variant of the query (like \`queryAllByText\`, \`getAllByText\`, or \`findAllByText\`)). Container: ${container}`
+                            `Found multiple elements with the text: Hello World!\n\n(If this is intentional, then use the \`*AllBy*\` variant of the query (like \`queryAllByText\`, \`getAllByText\`, or \`findAllByText\`)). Container: ${container}`
                         )
                     );
                 }
@@ -276,7 +276,7 @@ describe('text query', () => {
                 ).rejects.toEqual(
                     getElementError(
                         getMultipleElementsFoundError(
-                            'Found multiple elements matching Hello World!',
+                            'Found multiple elements with the text: Hello World!',
                             container
                         ).message,
                         document.firstElementChild as HTMLElement
