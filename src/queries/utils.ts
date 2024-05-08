@@ -7,7 +7,15 @@ const findAllMatchingInControl = (
     container: Control,
     matcher: (control: Control) => boolean
 ): Control[] => {
-    return container.getDescendants().filter((control) => matcher(control));
+    const controls = [];
+    if (matcher(container)) {
+        controls.push(container);
+    }
+
+    return [
+        ...controls,
+        ...container.getDescendants().filter((control) => matcher(control)),
+    ];
 };
 const findAllMatchingInTexture = (
     container: AdvancedDynamicTexture,

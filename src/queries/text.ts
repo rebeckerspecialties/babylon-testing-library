@@ -2,17 +2,13 @@ import { Control, TextBlock } from '@babylonjs/gui';
 import { BabylonContainer, findAllMatchingDescendants } from './utils';
 import { buildQueries } from '../query-helpers';
 
-export function getMultipleElementsFoundError(
-    message: string,
-    container: BabylonContainer
-) {
-    return new Error(
-        `${message}\n\n(If this is intentional, then use the \`*AllBy*\` variant of the query (like \`queryAllByText\`, \`getAllByText\`, or \`findAllByText\`)). Container: ${container}`
-    );
-}
+const getMultipleError = (_c: BabylonContainer, text: string) =>
+    `Found multiple elements with the text: ${text}`;
 
 const getMissingError = (message: string, container: BabylonContainer) => {
-    return new Error(`${message}. Container: ${container}`);
+    return new Error(
+        `Failed to find an element matching: ${message}. Container: ${container}`
+    );
 };
 
 const queryAllByText = (
@@ -23,13 +19,7 @@ const queryAllByText = (
         return control instanceof TextBlock && control.text === text;
     };
 
-    const baseArray: Control[] = [];
-
-    if (container instanceof Control && matcher(container)) {
-        baseArray.push(container);
-    }
-
-    return [...baseArray, ...findAllMatchingDescendants(container, matcher)];
+    return findAllMatchingDescendants(container, matcher);
 };
 
 const {
@@ -38,11 +28,7 @@ const {
     getBy: getByText,
     findAllBy: findAllByText,
     findBy: findByText,
-} = buildQueries(
-    queryAllByText,
-    getMultipleElementsFoundError,
-    getMissingError
-);
+} = buildQueries(queryAllByText, getMultipleError, getMissingError);
 
 export {
     queryAllByText,
