@@ -46,6 +46,7 @@
         "typescript-eslint": "^7.8.0"
     },
     "dependencies": {
+        "@babylonjs/accessibility": "^7.6.0",
         "@babylonjs/core": "^7.5.0",
         "@babylonjs/gui": "^7.5.0",
         "@testing-library/dom": "^10.1.0"
