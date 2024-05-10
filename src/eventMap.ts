@@ -30,6 +30,10 @@ export type EventMap = {
         observableName: 'onWheelObservable';
         defaultInit: Vector2;
     };
+    changeText: {
+        observableName: 'onTextChangedObservable';
+        defaultInit: string;
+    };
 };
 
 const DEFAULT_VECTOR2_WITH_INFO = new Vector2WithInfo(Vector2.Zero());
@@ -62,5 +66,9 @@ export const eventMap: EventMap = {
     wheel: {
         observableName: 'onWheelObservable',
         defaultInit: Vector2.Zero(),
+    },
+    changeText: {
+        observableName: 'onTextChangedObservable',
+        defaultInit: '',
     },
 };

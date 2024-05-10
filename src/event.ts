@@ -1,5 +1,5 @@
 import { Observable } from '@babylonjs/core';
-import { Control } from '@babylonjs/gui';
+import { Control, InputText } from '@babylonjs/gui';
 import { EventMap, eventMap } from './eventMap';
 
 export type Event<K extends keyof EventMap> = {
@@ -8,10 +8,16 @@ export type Event<K extends keyof EventMap> = {
     eventData: EventMap[K]['defaultInit'];
 };
 
-function fireEventFn<K extends keyof EventMap>(
-    control: Control,
-    event: Event<K>
-) {
+type ControlWithObservable<K extends keyof EventMap> = Control & {
+    [observableKey in EventMap[K]['observableName']]: Observable<
+        EventMap[K]['defaultInit']
+    >;
+};
+
+function fireEventFn<
+    K extends keyof EventMap,
+    C extends ControlWithObservable<K>
+>(control: C, event: Event<K>) {
     const eventObservable = control[event.observableName];
 
     if (!(eventObservable instanceof Observable)) {
@@ -45,10 +51,17 @@ Object.keys(eventMap).forEach((key: keyof EventMap) => {
     createEventFn[key] = (node: Control, init?: typeof defaultInit) =>
         createEventFn(key, node, init ?? defaultInit);
 
-    fireEventFn[key] = (node: Control, init?: typeof defaultInit) => {
+    fireEventFn[key] = (
+        node: ControlWithObservable<keyof EventMap>,
+        init?: typeof defaultInit
+    ) => {
         fireEventFn(node, createEventFn[key](node, init));
     };
 });
+
+fireEventFn['changeText'] = (node: InputText, input: string) => {
+    node.text = input;
+};
 
 type CreateEventFn = (
     k: keyof EventMap,

@@ -8,7 +8,13 @@ import {
 } from '@babylonjs/core';
 import { Event, createEvent, fireEvent } from './event';
 import { EventMap, eventMap } from './eventMap';
-import { AdvancedDynamicTexture, Button, Control, Grid } from '@babylonjs/gui';
+import {
+    AdvancedDynamicTexture,
+    Button,
+    Control,
+    Grid,
+    InputText,
+} from '@babylonjs/gui';
 
 describe('event', () => {
     let scene: Scene,
@@ -114,5 +120,19 @@ describe('event', () => {
             observableName: 'onWheelObservable',
             eventData: new Vector2(0.5, 0.5),
         });
+    });
+
+    it('should trigger text changes', () => {
+        const spy = jest.fn();
+        const textControl = new InputText('testText');
+        textControl.onTextChangedObservable.add((textInput) => {
+            spy(textInput);
+        });
+
+        fireEvent.changeText(textControl, 'Hello World!');
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith(textControl);
+
+        expect(textControl.text).toEqual('Hello World!');
     });
 });
