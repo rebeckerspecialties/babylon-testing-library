@@ -1,6 +1,11 @@
 import { waitFor, waitForOptions } from '@testing-library/dom';
 import { BabylonContainer, findAllMatchingDescendants } from './queries/utils';
 
+export type GetErrorFunction<ContainerType> = (
+    c: ContainerType,
+    text: string
+) => string;
+
 export function getMultipleElementsFoundError<ContainerType>(
     message: string,
     container: ContainerType
@@ -47,8 +52,8 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
         container: ContainerType,
         matcher: MatcherType
     ) => ResultType[],
-    getMultipleError: (container: ContainerType, message: string) => string,
-    getMissingError: (text: string, container: ContainerType) => Error
+    getMultipleError: GetErrorFunction<ContainerType>,
+    getMissingError: GetErrorFunction<ContainerType>
 ) {
     const queryBy = (container: ContainerType, matcher: MatcherType) => {
         const result = queryAllBy(container, matcher);
@@ -70,7 +75,7 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
     const getAllBy = (container: ContainerType, matcher: MatcherType) => {
         const result = queryAllBy(container, matcher);
         if (result.length === 0) {
-            throw getMissingError(`${matcher}`, container);
+            throw new Error(getMissingError(container, `${matcher}`));
         }
         return result;
     };

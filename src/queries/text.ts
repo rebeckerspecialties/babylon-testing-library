@@ -5,10 +5,8 @@ import { buildQueries } from '../query-helpers';
 const getMultipleError = (_c: BabylonContainer, text: string) =>
     `Found multiple elements with the text: ${text}`;
 
-const getMissingError = (message: string, container: BabylonContainer) => {
-    return new Error(
-        `Failed to find an element matching: ${message}. Container: ${container}`
-    );
+const getMissingError = (container: BabylonContainer, message: string) => {
+    return `Failed to find an element matching: ${message}. Container: ${container}`;
 };
 
 const queryAllByText = (
