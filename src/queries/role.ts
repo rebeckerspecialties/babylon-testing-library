@@ -4,8 +4,9 @@ import {
     ByRoleMatcher,
     ByRoleOptions,
     queryAllByRole as domQueryAllByRole,
-    prettyDOM,
 } from '@testing-library/dom';
+import { findAllMatchingDescendants } from './utils';
+import { Control } from '@babylonjs/gui';
 
 /**
  * Idea:
@@ -18,14 +19,38 @@ const queryAllByRole = (
     node: Node | Scene,
     role: ByRoleMatcher,
     options?: ByRoleOptions
-) => {
+): (Node | Control)[] => {
     const scene = node instanceof Scene ? node : node.getScene();
 
     const engine = scene.getEngine();
     engine._renderingCanvas = document.createElement('canvas');
 
     HTMLTwinRenderer.Render(scene);
-    return domQueryAllByRole(engine.getRenderingCanvas(), role, options);
+    const elements = domQueryAllByRole(
+        engine.getRenderingCanvas(),
+        role,
+        options
+    );
+
+    const matchingNodes = scene
+        .getNodes()
+        .filter((node) =>
+            elements.some(
+                (element) =>
+                    element.firstChild.textContent ===
+                    node.accessibilityTag?.description
+            )
+        );
+
+    const matchingControls = findAllMatchingDescendants(scene, (control) =>
+        elements.some(
+            (element) =>
+                element.firstChild.textContent ===
+                control.accessibilityTag?.description
+        )
+    );
+
+    return [...matchingNodes, ...matchingControls];
 };
 
 export { queryAllByRole };

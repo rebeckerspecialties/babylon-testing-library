@@ -1,6 +1,7 @@
 import { Camera, NullEngine, Scene, Vector3 } from '@babylonjs/core';
 import { queryAllByRole } from './role';
-import { AdvancedDynamicTexture, InputText } from '@babylonjs/gui';
+import { AdvancedDynamicTexture, Button } from '@babylonjs/gui';
+import { IAccessibilityTag } from '@babylonjs/core/IAccessibilityTag';
 
 describe('role', () => {
     it('should queryAllByRole', async () => {
@@ -15,18 +16,20 @@ describe('role', () => {
             scene
         );
 
-        const control = new InputText('UserSearch', 'user');
+        const control = Button.CreateSimpleButton('AddTodo', 'Add TODO');
         control.accessibilityTag = {
-            description: 'Search for users',
+            description: 'Add a todo to the list.',
             aria: {
-                role: 'search',
-            },
+                'aria-hidden': 'true',
+            } as IAccessibilityTag['aria'],
         };
         gui.addControl(control);
 
         scene.render();
 
-        expect(queryAllByRole(scene, 'search')).toHaveLength(1);
+        const elements = queryAllByRole(scene, 'button', { hidden: true });
+        expect(elements).toHaveLength(1);
+        expect(elements[0]).toEqual(control);
 
         camera.dispose();
         scene.dispose();
