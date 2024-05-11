@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "ES2022",
         "esModuleInterop": true,
         "target": "es6",
         "moduleResolution": "node",
@@ -16,7 +16,7 @@
         "skipDefaultLibCheck": true,
         "baseUrl": "."
     },
-    "lib": ["es2015"],
+    "lib": ["ES2022"],
     "exclude": ["node_modules", "tmp"],
     "include": ["src/**/*.ts"]
 }
