@@ -7,8 +7,8 @@
         "sourceMap": true,
         "outDir": "dist",
         "importHelpers": true,
-        "rootDir": ".",
-        "declaration": false,
+        "rootDir": "src",
+        "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "lib": ["es2023", "dom"],
@@ -18,5 +18,5 @@
     },
     "lib": ["es2015"],
     "exclude": ["node_modules", "tmp"],
-    "include": ["**/*.ts"]
+    "include": ["src/**/*.ts"]
 }
