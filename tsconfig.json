@@ -1,14 +1,14 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "ES2022",
         "esModuleInterop": true,
         "target": "es6",
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
         "importHelpers": true,
-        "rootDir": ".",
-        "declaration": false,
+        "rootDir": "src",
+        "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "lib": ["es2023", "dom"],
@@ -16,7 +16,7 @@
         "skipDefaultLibCheck": true,
         "baseUrl": "."
     },
-    "lib": ["es2015"],
+    "lib": ["ES2022"],
     "exclude": ["node_modules", "tmp"],
-    "include": ["**/*.ts"]
+    "include": ["src/**/*.ts"]
 }
