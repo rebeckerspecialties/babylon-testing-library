@@ -6,8 +6,6 @@ Simple utilities that encourage good testing practices for [Babylon.js](https://
 
 Let's say you are using Babylon.js to build a 3D widget for your webapp, 3D-enabled native app, or WebXR application. You want to write maintainable unit tests that do not break when the implementation of your component changes, but fail with helpful outputs when the functionality changes. You want to avoid leaking implementation details into your unit tests. You want your unit tests to mirror how your users will interact with the code.
 
-## What is Babylon Testing Library?
-
 Babylon Testing Library provides a lightweight API for querying a Babylon scene for your components. These queries aim to match how your users might find elements in the scene. For example, you may want to query a UI element by its text content or a mesh by whether it can be clicked. Babylon testing Library also exports utility functions for firing events in your scene, like clicking a mesh or changing the text within a form.
 
 ## Installation
