@@ -1,0 +1,14 @@
+node_modules/*
+coverage/
+
+# typescript files
+src/*
+
+# config files
+.eslintrc.json
+tsconfig.json
+tsconfig.build.json
+.github/
+babel.config.js
+.prettierrc
+jest.config.ts

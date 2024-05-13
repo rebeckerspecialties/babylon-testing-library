@@ -1,6 +1,6 @@
 {
     "name": "babylon-testing-library",
-    "version": "1.0.0-alpha",
+    "version": "1.0.0-alpha.1",
     "description": "Simple utilities that encourage good testing practices for Babylon.js",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
