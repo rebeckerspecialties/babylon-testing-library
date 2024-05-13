@@ -64,3 +64,15 @@ fireEvent.pointerUp(textButton);
 
 expect(textBlock.text).toEqual('Count: 1');
 ```
+
+## Unimplemented API
+
+### Queries
+
+A small set of queries is implemented for the alpha release. We plan to implement the remaining queries exported from DOM testing library, but it's not clear what the corresponding implementation will be for queries like `getByLabelText`, `getByAltText`, and `getByTitle`. Babylon is not as complete in its accessibility standards as the DOM, so we may need to lean on user accessibility tagging to implement these queries.
+
+We will also want to extend the DOM testing API to allow us to query 3D meshes. It's not clear precisely how the existing queries map to a 3D sphere, for example. We want to be careful about maintaining high rigor around accessibility while implementing queries that map to how users parse a 3D scene. These will likely be queries around mesh transformation (scale, position, rotation), color, and role (selectable, clickable, collidable, etc.).
+
+### Events
+
+Only a small subset of Babylon GUI events are implemented currently. We aim to implement utilities for triggering [Babylon ActionManager events](https://doc.babylonjs.com/features/featuresDeepDive/events/actions) and observable GUI events where it will reduce boilerplate. Because Babylon is observable-driven, users may find it more convenient to fire a text change event with `input.text = 'First Name'`, rather than firing an event via Babylon Testing Library. User feedback will be crucial here for maintaining the right balance between providing a coherent API and avoiding test boilerplate where the functionality is already supportetd in Babylon.
