@@ -52,7 +52,7 @@
         "@testing-library/dom": "^10.1.0"
     },
     "peerDependencies": {
-        "@babylonjs/core": "^8.2.2",
-        "@babylonjs/gui": "^8.2.2"
+        "@babylonjs/core": "^7.0.0 || ^8.0.0",
+        "@babylonjs/gui": "^7.0.0 || ^8.0.0"
     }
 }
