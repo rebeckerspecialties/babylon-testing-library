@@ -1,6 +1,6 @@
 {
     "name": "babylon-testing-library",
-    "version": "2.0.1",
+    "version": "3.0.0",
     "description": "Simple utilities that encourage good testing practices for Babylon.js",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -30,6 +30,8 @@
         "@babel/core": "^7.24.5",
         "@babel/preset-env": "^7.24.5",
         "@babel/preset-typescript": "^7.24.1",
+        "@babylonjs/core": "^8.2.2",
+        "@babylonjs/gui": "^8.2.2",
         "@jest/globals": "^29.7.0",
         "@swc/cli": "^0.3.12",
         "@swc/core": "^1.5.3",
@@ -47,11 +49,10 @@
         "typescript-eslint": "^7.8.0"
     },
     "dependencies": {
-        "@babylonjs/core": "^8.2.2",
-        "@babylonjs/gui": "^8.2.2",
         "@testing-library/dom": "^10.1.0"
     },
     "peerDependencies": {
-        "@babylonjs/core": "^8.2.2"
+        "@babylonjs/core": "^8.2.2",
+        "@babylonjs/gui": "^8.2.2"
     }
 }
