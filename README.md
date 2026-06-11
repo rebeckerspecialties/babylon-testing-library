@@ -65,6 +65,66 @@ fireEvent.pointerUp(textButton);
 expect(textBlock.text).toEqual('Count: 1');
 ```
 
+### Real-time waits under jest fake timers
+
+Wall-clock polling helpers that stay correct when `jest.useFakeTimers()` is active.
+
+Under fake timers, a conventional polling wait (like `@testing-library/dom`'s `waitFor`) burns its `timeout` budget in **fake** milliseconds: each loop iteration advances the fake clock by `interval`, so a "20 second" budget is really `timeout / interval` iterations executed at CPU speed. Real async work — asset HTTP loads, file I/O — gets only a sliver of event-loop time per iteration and can starve under CI load while the budget evaporates. The helpers below keep the fake clock pumping (so timer-driven app code keeps moving) but enforce the deadline on the real clock, and they yield one real macrotask per advance so genuine I/O makes progress between fake-clock ticks.
+
+The `findBy*` queries above are built on the same engine, so they also behave correctly under fake timers.
+
+#### waitForRealTime
+
+`waitFor` semantics with the timeout enforced in real elapsed time. Reach for it when the awaited condition depends on genuine async work (network, file system) that fake-time budgets cannot meaningfully bound. Callbacks may be sync or async; a pending async callback is never treated as success — the clock keeps pumping while it settles. A callback that throws or rejects inside the real deadline is polled again; past the deadline the wait rejects with the last error.
+
+```js
+jest.useFakeTimers();
+
+await waitForRealTime(
+    () => {
+        expect(getByText(scene, 'Asset loaded')).toBeDefined();
+    },
+    { timeout: 20000 }
+);
+```
+
+#### waitForAllSettled
+
+Resolves once every given promise has settled (fulfilled or rejected), pumping fake timers while real I/O completes. Rejections count as settled and are not propagated — assert on the operations' observable results afterwards. On timeout it rejects with an error naming the `label` and the pending/total counts. Prefer gating on the actual async operation over polling for its side effects.
+
+```js
+jest.useFakeTimers();
+const loads = urls.map((url) => loadAssetAsync(url, scene));
+
+await waitForAllSettled(loads, { timeout: 20000, label: 'asset load(s)' });
+```
+
+#### waitOrAdvance
+
+Advances fake timers deterministically (draining a microtask so timer callbacks' continuations run) when they are installed, otherwise sleeps for real:
+
+```js
+await waitOrAdvance(500);
+```
+
+#### Choosing a helper
+
+- Condition driven purely by timers? `waitOrAdvance(ms)` is deterministic and instant.
+- Condition driven by real I/O while fake timers are installed? `waitForRealTime` / `waitForAllSettled`.
+- Under real timers, `waitForRealTime` behaves like a plain polling `waitFor` with the same defaults (`timeout: 1000`, `interval: 50`).
+
+Fake timers are detected by inspecting the timer functions themselves (the `clock` property that modern/sinon fake timers attach to `setTimeout`, or the legacy `_isMockFunction` flag) — never via `globalThis.jest`, which does not exist under Jest 30. This also makes the detection work under non-jest runners that install sinon fake timers.
+
+#### Note for React consumers
+
+babylon-testing-library has no React dependency, direct or transitive. If you use it inside a React app, note that `@testing-library/react`'s `waitFor` flushes state updates through `act` via its `unstable_advanceTimersWrapper`; to get the same warning-free behavior from these helpers, pass `act` as the `wrapper` option — it wraps every pump step:
+
+```js
+import { act } from 'react';
+
+await waitForRealTime(callback, { wrapper: act });
+```
+
 ## Unimplemented API
 
 ### Queries

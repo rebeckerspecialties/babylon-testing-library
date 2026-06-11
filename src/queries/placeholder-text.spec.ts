@@ -14,7 +14,6 @@ import {
     InputText,
 } from '@babylonjs/gui';
 import { BabylonContainer } from './utils';
-import { getElementError } from '@testing-library/dom';
 import { getMultipleElementsFoundError } from '../query-helpers';
 
 describe('placeholder text query', () => {
@@ -65,7 +64,7 @@ describe('placeholder text query', () => {
 
     const allByFunctions: [
         string,
-        (container: BabylonContainer, text: string) => Control[]
+        (container: BabylonContainer, text: string) => Control[],
     ][] = [
         ['getAllByPlaceholderText', getAllByPlaceholderText],
         ['queryAllByPlaceholderText', queryAllByPlaceholderText],
@@ -73,7 +72,7 @@ describe('placeholder text query', () => {
 
     const singleFunctions: [
         string,
-        (container: BabylonContainer, text: string) => Control
+        (container: BabylonContainer, text: string) => Control,
     ][] = [
         ['getByPlaceholderText', getByPlaceholderText],
         ['queryByPlaceholderText', queryByPlaceholderText],
@@ -168,9 +167,8 @@ describe('placeholder text query', () => {
                         timeout: 10,
                     })
                 ).rejects.toEqual(
-                    getElementError(
-                        `Unable to find an element with the placeholder text of: Not real text. Container: ${container}`,
-                        document.firstElementChild as HTMLElement
+                    new Error(
+                        `Unable to find an element with the placeholder text of: Not real text. Container: ${container}`
                     )
                 );
             });
@@ -182,9 +180,8 @@ describe('placeholder text query', () => {
                         timeout: 10,
                     })
                 ).rejects.toEqual(
-                    getElementError(
-                        `Unable to find an element with the placeholder text of: Not real text. Container: ${container}`,
-                        document.firstElementChild as HTMLElement
+                    new Error(
+                        `Unable to find an element with the placeholder text of: Not real text. Container: ${container}`
                     )
                 );
             });
@@ -287,12 +284,9 @@ describe('placeholder text query', () => {
                 await expect(
                     findByPlaceholderText(container, 'Hello World!')
                 ).rejects.toEqual(
-                    getElementError(
-                        getMultipleElementsFoundError(
-                            'Found multiple elements with the placeholder text of: Hello World!',
-                            container
-                        ).message,
-                        document.firstElementChild as HTMLElement
+                    getMultipleElementsFoundError(
+                        'Found multiple elements with the placeholder text of: Hello World!',
+                        container
                     )
                 );
             });

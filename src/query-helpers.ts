@@ -1,4 +1,4 @@
-import { waitFor, waitForOptions } from '@testing-library/dom';
+import { RealTimeWaitOptions, waitForRealTime } from './realTimeWaits';
 import { BabylonContainer, findAllMatchingDescendants } from './queries/utils';
 
 export type GetErrorFunction<ContainerType> = (
@@ -94,9 +94,9 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
     const findAllBy = (
         container: ContainerType,
         matcher: MatcherType,
-        waitForOptions?: waitForOptions
+        waitForOptions?: RealTimeWaitOptions
     ) => {
-        return waitFor(() => {
+        return waitForRealTime(() => {
             return getAllBy(container, matcher);
         }, waitForOptions);
     };
@@ -104,9 +104,9 @@ export function buildQueries<ContainerType, MatcherType, ResultType>(
     const findBy = (
         container: ContainerType,
         matcher: MatcherType,
-        waitForOptions?: waitForOptions
+        waitForOptions?: RealTimeWaitOptions
     ) => {
-        return waitFor(() => {
+        return waitForRealTime(() => {
             return getBy(container, matcher);
         }, waitForOptions);
     };

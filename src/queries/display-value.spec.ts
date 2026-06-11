@@ -14,7 +14,6 @@ import {
     InputText,
 } from '@babylonjs/gui';
 import { BabylonContainer } from './utils';
-import { getElementError } from '@testing-library/dom';
 import { getMultipleElementsFoundError } from '../query-helpers';
 
 describe('display value query', () => {
@@ -65,7 +64,7 @@ describe('display value query', () => {
 
     const allByFunctions: [
         string,
-        (container: BabylonContainer, text: string) => Control[]
+        (container: BabylonContainer, text: string) => Control[],
     ][] = [
         ['getAllByDisplayValue', getAllByDisplayValue],
         ['queryAllByDisplayValue', queryAllByDisplayValue],
@@ -73,7 +72,7 @@ describe('display value query', () => {
 
     const singleFunctions: [
         string,
-        (container: BabylonContainer, text: string) => Control
+        (container: BabylonContainer, text: string) => Control,
     ][] = [
         ['getByDisplayValue', getByDisplayValue],
         ['queryByDisplayValue', queryByDisplayValue],
@@ -168,9 +167,8 @@ describe('display value query', () => {
                         timeout: 10,
                     })
                 ).rejects.toEqual(
-                    getElementError(
-                        `Unable to find an element with the display value: Not real text. Container: ${container}`,
-                        document.firstElementChild as HTMLElement
+                    new Error(
+                        `Unable to find an element with the display value: Not real text. Container: ${container}`
                     )
                 );
             });
@@ -182,9 +180,8 @@ describe('display value query', () => {
                         timeout: 10,
                     })
                 ).rejects.toEqual(
-                    getElementError(
-                        `Unable to find an element with the display value: Not real text. Container: ${container}`,
-                        document.firstElementChild as HTMLElement
+                    new Error(
+                        `Unable to find an element with the display value: Not real text. Container: ${container}`
                     )
                 );
             });
@@ -287,12 +284,9 @@ describe('display value query', () => {
                 await expect(
                     findByDisplayValue(container, 'Hello World!')
                 ).rejects.toEqual(
-                    getElementError(
-                        getMultipleElementsFoundError(
-                            'Found multiple elements with the display value: Hello World!',
-                            container
-                        ).message,
-                        document.firstElementChild as HTMLElement
+                    getMultipleElementsFoundError(
+                        'Found multiple elements with the display value: Hello World!',
+                        container
                     )
                 );
             });
