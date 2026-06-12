@@ -96,6 +96,26 @@ const experience = createMockXrExperience({
 
 Also available: `createMockXrController` (shared button/axis observables), `createMockXrControllerWithBindings` (distinct observables per component), `createMockXrInputSource`, `createMockXRSession` (listener registry you can fire), and `buildMockControllersFromProfile`, which fabricates the min/max/value transform nodes from a motion-controller profile so button/thumbstick animation code runs without loading assets.
 
+### Finger-poke simulation (near interaction)
+
+A complete, allocation-free "poke a 3D button with a fingertip" stack — drive hand-tracked menu interactions headlessly from nothing but fingertip world positions, tuned on real hardware:
+
+- `probePoke(fingerTipWorld, hitboxWorldMatrix, lateralMargin)` — projects a fingertip into a hitbox's oriented frame; the thinnest axis is the press axis.
+- `stepPoke(mem, candidate, nowMs, thresholds)` — single-finger state machine emitting `move`/`down`/`up` with press/release hysteresis and a per-press debounce (`DEFAULT_POKE_THRESHOLDS`: hover 20mm, press 1mm, release 4mm, 250ms).
+- `pokeFrame(scene, fingerTipWorld, hitboxes, mem, nowMs, thresholds?)` — probes the enabled hitboxes, advances the machine, and injects synthetic `PointerInfo`s (tagged `pointerType: 'xr-near'`, see `POKE_POINTER_TYPE`) into `scene.onPointerObservable`, so mesh-button pipelines react exactly as they would to a controller pointer. `pokeRelease(scene, mem, nowMs, thresholds?)` ends an in-progress poke on tracking loss without leaving stuck hover/press state.
+
+```js
+const mem = createPokeMemory();
+
+pokeFrame(scene, new Vector3(0, 0.01, 0), [hitBox], mem, 0); // hover
+pokeFrame(scene, new Vector3(0, 0, 0), [hitBox], mem, 16); // press
+pokeFrame(scene, new Vector3(0, 0.01, 0), [hitBox], mem, 32); // withdraw → click
+
+expect(onClick).toHaveBeenCalledTimes(1);
+```
+
+Disabled hitboxes are skipped (`isEnabled()` folds in every ancestor — palm-up gates and face toggles gate pokes the same way they gate rendering), so a test poking a gated-off menu fails the way the device does.
+
 ### Babylon-aware matchers
 
 ```js

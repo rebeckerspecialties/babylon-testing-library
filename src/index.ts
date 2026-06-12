@@ -6,3 +6,6 @@ export * from './waitOrAdvance';
 export * from './mesh-events';
 export * from './xrMocks';
 export * from './matchers';
+export * from './pokeGeometry';
+export * from './pokeStateMachine';
+export * from './pokeEmitter';
