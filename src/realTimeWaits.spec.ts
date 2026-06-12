@@ -95,6 +95,32 @@ describe('waitForRealTime', () => {
         expect(jest.getRealSystemTime() - begin).toBeGreaterThanOrEqual(250);
     });
 
+    it('rejects with a named timeout error when the callback promise never settles', async () => {
+        jest.useFakeTimers();
+        const begin = jest.getRealSystemTime();
+
+        await expect(
+            waitForRealTime(() => new Promise<never>(() => undefined), {
+                timeout: 250,
+            })
+        ).rejects.toThrow(
+            'Timed out in waitForRealTime: callback promise still pending after 250ms'
+        );
+
+        expect(jest.getRealSystemTime() - begin).toBeGreaterThanOrEqual(250);
+    });
+
+    it('bounds a never-settling callback promise under real timers too', async () => {
+        await expect(
+            waitForRealTime(() => new Promise<never>(() => undefined), {
+                timeout: 100,
+                interval: 10,
+            })
+        ).rejects.toThrow(
+            'Timed out in waitForRealTime: callback promise still pending after 100ms'
+        );
+    });
+
     it('rejects with the last callback error under real timers too', async () => {
         await expect(
             waitForRealTime(

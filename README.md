@@ -75,7 +75,7 @@ The `findBy*` queries above are built on the same engine, so they also behave co
 
 #### waitForRealTime
 
-`waitFor` semantics with the timeout enforced in real elapsed time. Reach for it when the awaited condition depends on genuine async work (network, file system) that fake-time budgets cannot meaningfully bound. Callbacks may be sync or async; a pending async callback is never treated as success — the clock keeps pumping while it settles. A callback that throws or rejects inside the real deadline is polled again; past the deadline the wait rejects with the last error.
+`waitFor` semantics with the timeout enforced in real elapsed time. Reach for it when the awaited condition depends on genuine async work (network, file system) that fake-time budgets cannot meaningfully bound. Callbacks may be sync or async; a pending async callback is never treated as success — the clock keeps pumping while it settles, and a promise still pending when the real deadline lapses rejects with a named timeout error (no hanging until the test runner's own timeout). A callback that throws or rejects inside the real deadline is polled again; past the deadline the wait rejects with the last error.
 
 ```js
 jest.useFakeTimers();

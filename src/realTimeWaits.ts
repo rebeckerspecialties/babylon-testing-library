@@ -70,10 +70,11 @@ type SettledOutcome<T> =
  *
  * Callbacks may be sync or async. A pending async callback does not count
  * as a successful poll: the fake clock keeps pumping while it settles (it
- * may need fake-clock advances to do so). A callback that throws or rejects
- * inside the real deadline is polled again; past the deadline the wait ends
- * with the last error. A callback that returns (or resolves) ends the wait
- * with its value.
+ * may need fake-clock advances to do so), and if it is still pending when
+ * the real deadline lapses the wait rejects with a timeout error. A
+ * callback that throws or rejects inside the real deadline is polled again;
+ * past the deadline the wait ends with the last error. A callback that
+ * returns (or resolves) ends the wait with its value.
  */
 export const waitForRealTime = async <T>(
     callback: () => T | Promise<T>,
@@ -112,7 +113,17 @@ export const waitForRealTime = async <T>(
             }
         );
 
+        // A pending promise is not a successful poll, but it must not pump
+        // unbounded either: once the real deadline lapses, the wait ends
+        // with a named timeout error instead of hanging until the test
+        // runner's own timeout. A settlement that lands during the final
+        // in-deadline pump is still honored.
         while (outcome === undefined) {
+            if (!withinDeadline()) {
+                throw new Error(
+                    `Timed out in waitForRealTime: callback promise still pending after ${timeout}ms`
+                );
+            }
             await pumpOnce(interval, wrapper);
         }
 
