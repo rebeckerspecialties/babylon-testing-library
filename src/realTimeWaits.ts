@@ -120,9 +120,17 @@ export const waitForRealTime = async <T>(
         // in-deadline pump is still honored.
         while (outcome === undefined) {
             if (!withinDeadline()) {
-                throw new Error(
-                    `Timed out in waitForRealTime: callback promise still pending after ${timeout}ms`
-                );
+                // Settlement is observed via microtask handlers, which may
+                // be queued but not yet run; drain once so a promise that
+                // settled just inside the deadline is not misreported as
+                // still pending.
+                await Promise.resolve();
+                if (outcome === undefined) {
+                    throw new Error(
+                        `Timed out in waitForRealTime: callback promise still pending after ${timeout}ms`
+                    );
+                }
+                break;
             }
             await pumpOnce(interval, wrapper);
         }

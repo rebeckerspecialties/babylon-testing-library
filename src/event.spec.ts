@@ -80,6 +80,18 @@ describe('event', () => {
         }
     );
 
+    it('fires pointerMove on onPointerMoveObservable (regression: was wired to pointer up)', () => {
+        const moveSpy = jest.fn();
+        const upSpy = jest.fn();
+        expectedControl.onPointerMoveObservable.add(moveSpy as null);
+        expectedControl.onPointerUpObservable.add(upSpy as null);
+
+        fireEvent.pointerMove(expectedControl);
+
+        expect(moveSpy).toHaveBeenCalledTimes(1);
+        expect(upSpy).not.toHaveBeenCalled();
+    });
+
     it('should throw when fireEvent is called with a bad observable name', () => {
         expect(() => {
             fireEvent(expectedControl, {
