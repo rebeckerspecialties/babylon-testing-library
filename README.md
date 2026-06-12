@@ -16,7 +16,7 @@ npm install --save-dev babylon-testing-library
 
 ## API
 
-Babylon Testing Library implements a partial and modified API of the [DOM Testing Library](https://testing-library.com/docs/queries/about). In the alpha release, Babylon only includes utilities for interacting with the Babylon GUI. Utilities for interacting with 3D meshes will be included for the first release.
+Babylon Testing Library implements a partial and modified API of the [DOM Testing Library](https://testing-library.com/docs/queries/about). Queries cover Babylon GUI controls and 3D meshes; events cover GUI control observables (`fireEvent`) and scene-level pointer picks on meshes (`clickMesh` and friends). WebXR mocks and Babylon-aware matchers round out headless testing of hand- and controller-driven UI.
 
 ### Queries
 
@@ -49,6 +49,64 @@ Query the current text value of an InputText control.
 const firstNameText = getByDisplayValue(scene, 'First Name');
 expect(firstNameText.text).toEqual('First Name');
 ```
+
+#### ByName
+
+Query a GUI control by its Babylon `name` — the engine-native equivalent of a test id. Prefer the user-facing queries above where possible; reach for ByName for icon buttons and other controls with no queryable text.
+
+```js
+const button = getByName(scene, 'searchButton');
+const late = await findByName(scene, 'lateButton'); // waits in real elapsed time
+```
+
+#### ByMeshName
+
+Query 3D meshes in a scene by name. The `findBy*` variants wait in real elapsed time, which suits meshes that appear via genuinely asynchronous asset loads.
+
+```js
+const hitBox = getByMeshName(scene, 'hitBox');
+const loaded = await findByMeshName(scene, 'avatar', { timeout: 20000 });
+```
+
+### Mesh pointer simulation
+
+Mesh interactions don't flow through GUI control observables — Babylon delivers them through `scene.onPointerObservable` with a `PickingInfo` from a ray pick. These helpers perform a real pick against the mesh and notify the scene observable exactly as Babylon's input layer would:
+
+```js
+await clickMesh(scene, hitBox); // ray pick → pointer down + pointer up
+await hoverMesh(scene, hitBox); // pointer move
+await fireMeshPointer(scene, hitBox, PointerEventTypes.POINTERUP, {
+    pointerType: 'xr-near', // tag near-interaction pokes
+});
+```
+
+Picks render the scene and recompute the target inside every retry (a stale pick target is a classic source of CI flakes), honor `isPickable`/`isEnabled`/`isVisible` by default — a disabled button is not clickable in tests, just like on device — and enforce their timeout in real elapsed time under fake timers. The ray origin defaults to the active camera's position; pass `origin` explicitly for camera-less scenes. `pickThinInstance(scene, mesh, index)` ray-picks a specific thin instance.
+
+### WebXR mocks
+
+Headless mocks for the WebXR surface that hand- and controller-menu code touches — no device, no session, no controller GLBs. All observables are real Babylon `Observable`s; tests drive them with `notifyObservers`.
+
+```js
+const hand = createMockXrHand({ 'index-finger-tip': tipMesh });
+const experience = createMockXrExperience({
+    handTrackingEnabled: true,
+    getHandByHandedness: () => hand,
+});
+```
+
+Also available: `createMockXrController` (shared button/axis observables), `createMockXrControllerWithBindings` (distinct observables per component), `createMockXrInputSource`, `createMockXRSession` (listener registry you can fire), and `buildMockControllersFromProfile`, which fabricates the min/max/value transform nodes from a motion-controller profile so button/thumbstick animation code runs without loading assets.
+
+### Babylon-aware matchers
+
+```js
+import { setupBabylonExpect } from 'babylon-testing-library';
+setupBabylonExpect(); // e.g. in a jest setup file
+
+expect(node.position).toEqualVector3(new Vector3(0, 0.02, 0));
+expect(mesh.rotationQuaternion).toEqualQuaternion(Quaternion.Identity(), 1e-6);
+```
+
+`toEqualVector3`, `toEqualQuaternion`, `toEqualMatrix`, `toEqualColor3`, and `toEqualColor4` compare via Babylon's own `equals`, with an optional epsilon argument mapping to `equalsWithEpsilon`. The raw matcher map is exported as `babylonMatchers` for direct `expect.extend` use in other runners.
 
 ### Events
 
@@ -131,7 +189,7 @@ await waitForRealTime(callback, { wrapper: act });
 
 A small set of queries is implemented for the alpha release. We plan to implement the remaining queries exported from DOM testing library, but it's not clear what the corresponding implementation will be for queries like `getByLabelText`, `getByAltText`, and `getByTitle`. Babylon is not as complete in its accessibility standards as the DOM, so we may need to lean on user accessibility tagging to implement these queries.
 
-We will also want to extend the DOM testing API to allow us to query 3D meshes. It's not clear precisely how the existing queries map to a 3D sphere, for example. We want to be careful about maintaining high rigor around accessibility while implementing queries that map to how users parse a 3D scene. These will likely be queries around mesh transformation (scale, position, rotation), color, and role (selectable, clickable, collidable, etc.).
+Meshes can now be queried by name (`*ByMeshName`) and interacted with via real ray picks (`clickMesh`), but richer 3D queries remain open. It's not clear precisely how the existing queries map to a 3D sphere, for example. We want to be careful about maintaining high rigor around accessibility while implementing queries that map to how users parse a 3D scene. These will likely be queries around mesh transformation (scale, position, rotation), color, and role (selectable, clickable, collidable, etc.).
 
 ### Events
 

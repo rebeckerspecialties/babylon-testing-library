@@ -3,8 +3,8 @@ import { Vector2WithInfo } from '@babylonjs/gui';
 
 export type EventMap = {
     pointerMove: {
-        observableName: 'onPointerUpObservable';
-        defaultInit: Vector2WithInfo;
+        observableName: 'onPointerMoveObservable';
+        defaultInit: Vector2;
     };
     pointerEnter: {
         observableName: 'onPointerEnterObservable';
@@ -35,9 +35,11 @@ export type EventMap = {
 const DEFAULT_VECTOR2_WITH_INFO = new Vector2WithInfo(Vector2.Zero());
 
 export const eventMap: EventMap = {
+    // onPointerMoveObservable carries plain Vector2 coordinates, unlike the
+    // other pointer observables' Vector2WithInfo.
     pointerMove: {
-        observableName: 'onPointerUpObservable',
-        defaultInit: DEFAULT_VECTOR2_WITH_INFO,
+        observableName: 'onPointerMoveObservable',
+        defaultInit: Vector2.Zero(),
     },
     pointerEnter: {
         observableName: 'onPointerEnterObservable',
