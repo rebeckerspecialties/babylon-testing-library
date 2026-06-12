@@ -14,7 +14,6 @@ import {
     TextBlock,
 } from '@babylonjs/gui';
 import { BabylonContainer } from './utils';
-import { getElementError } from '@testing-library/dom';
 import { getMultipleElementsFoundError } from '../query-helpers';
 
 describe('text query', () => {
@@ -64,7 +63,7 @@ describe('text query', () => {
 
     const allByFunctions: [
         string,
-        (container: BabylonContainer, text: string) => Control[]
+        (container: BabylonContainer, text: string) => Control[],
     ][] = [
         ['getAllByText', getAllByText],
         ['queryAllByText', queryAllByText],
@@ -72,7 +71,7 @@ describe('text query', () => {
 
     const singleFunctions: [
         string,
-        (container: BabylonContainer, text: string) => Control
+        (container: BabylonContainer, text: string) => Control,
     ][] = [
         ['getByText', getByText],
         ['queryByText', queryByText],
@@ -158,9 +157,8 @@ describe('text query', () => {
                 await expect(
                     findByText(container, 'Not real text', { timeout: 10 })
                 ).rejects.toEqual(
-                    getElementError(
-                        `Failed to find an element matching: Not real text. Container: ${container}`,
-                        document.firstElementChild as HTMLElement
+                    new Error(
+                        `Failed to find an element matching: Not real text. Container: ${container}`
                     )
                 );
             });
@@ -170,9 +168,8 @@ describe('text query', () => {
                 await expect(
                     findAllByText(container, 'Not real text', { timeout: 10 })
                 ).rejects.toEqual(
-                    getElementError(
-                        `Failed to find an element matching: Not real text. Container: ${container}`,
-                        document.firstElementChild as HTMLElement
+                    new Error(
+                        `Failed to find an element matching: Not real text. Container: ${container}`
                     )
                 );
             });
@@ -274,12 +271,9 @@ describe('text query', () => {
                 await expect(
                     findByText(container, 'Hello World!')
                 ).rejects.toEqual(
-                    getElementError(
-                        getMultipleElementsFoundError(
-                            'Found multiple elements with the text: Hello World!',
-                            container
-                        ).message,
-                        document.firstElementChild as HTMLElement
+                    getMultipleElementsFoundError(
+                        'Found multiple elements with the text: Hello World!',
+                        container
                     )
                 );
             });
@@ -312,6 +306,24 @@ describe('text query', () => {
                     duplicateControl,
                 ]);
             });
+        });
+    });
+
+    describe('under fake timers', () => {
+        afterEach(() => {
+            jest.useRealTimers();
+        });
+
+        it('findByText resolves when the text appears via a fake-clock timer', async () => {
+            jest.useFakeTimers();
+            const delayedControl = new TextBlock('text', 'Delayed!');
+            setTimeout(() => {
+                containerControl.addControl(delayedControl, 0, 1);
+            }, 3000);
+
+            const resultControl = await findByText(scene, 'Delayed!');
+
+            expect(resultControl).toEqual(delayedControl);
         });
     });
 });

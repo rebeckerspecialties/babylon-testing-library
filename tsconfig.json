@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "ES2022",
         "esModuleInterop": true,
-        "target": "es6",
+        "target": "ES2021",
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
@@ -16,7 +16,6 @@
         "skipDefaultLibCheck": true,
         "baseUrl": "."
     },
-    "lib": ["ES2022"],
     "exclude": ["node_modules", "tmp"],
     "include": ["src/**/*.ts"]
 }

@@ -5,7 +5,7 @@ coverage/
 src/*
 
 # config files
-.eslintrc.json
+eslint.config.mjs
 tsconfig.json
 tsconfig.build.json
 .github/
