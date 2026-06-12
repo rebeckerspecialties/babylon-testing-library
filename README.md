@@ -116,6 +116,28 @@ expect(onClick).toHaveBeenCalledTimes(1);
 
 Disabled hitboxes are skipped (`isEnabled()` folds in every ancestor — palm-up gates and face toggles gate pokes the same way they gate rendering), so a test poking a gated-off menu fails the way the device does.
 
+#### A complete hand-menu example
+
+[`src/examples/handMenu.spec.ts`](./src/examples/handMenu.spec.ts) is a runnable, headless WebXR hand menu composed entirely from this library's public API: a menu node with two poke buttons (invisible thin hitbox + visible face that raises on hover, skips its press squeeze for `xr-near` pokes, clicks on release), a mock tracked hand whose `index-finger-tip` joint mesh is moved frame by frame, and the per-frame wiring an app uses with a real `WebXRHand`:
+
+```js
+const hand = createMockXrHand({ 'index-finger-tip': fingerTipMesh });
+const mem = createPokeMemory();
+
+scene.onBeforeRenderObservable.add(() => {
+    const tip = hand.getJointMesh('index-finger-tip');
+    if (tip) {
+        pokeFrame(scene, tip.absolutePosition, hitboxes, mem, now);
+    } else {
+        pokeRelease(scene, mem, now); // tracking loss
+    }
+});
+```
+
+It covers the full interaction surface: click choreography (and that only the poked button clicks), hover raise/lower, the skipped squeeze for fingertip pokes, palm-down gating via `setEnabled` on the menu root, double-tap debounce, and tracking loss mid-press without stale re-fires.
+
+Two things differ on a real device and are intentionally out of headless scope: the menu node carries Babylon's `HandConstraintBehavior` for palm-up summoning — configure it with `HandConstraintVisibility.PALM_UP` explicitly if pokes drive your menu, because the default `PALM_AND_GAZE` disables the node the moment the user looks away from the hand they are poking by feel — and real hand-tracking input arrives through `WebXRHandTracking` rather than a test-driven joint mesh. In headless tests, palm gating reduces to `setEnabled`, which the poke pipeline honors identically.
+
 ### Babylon-aware matchers
 
 ```js
