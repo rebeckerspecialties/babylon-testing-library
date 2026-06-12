@@ -14,10 +14,12 @@ jobs:
             # Setup .npmrc file to publish to npm
             - uses: actions/setup-node@v4
               with:
-                  node-version: '20.x'
+                  node-version: '24.x'
                   registry-url: 'https://registry.npmjs.org'
+            # npm trusted publishing (OIDC) requires npm >= 11.5.1; no
+            # NPM_TOKEN secret is used — auth comes from the id-token
+            # permission plus the trusted-publisher config on npmjs.com.
+            - run: npm install -g npm@latest
             - run: npm ci
             - run: npm run build
             - run: npm publish --provenance --access public
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
